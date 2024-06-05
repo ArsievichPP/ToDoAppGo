@@ -9,26 +9,24 @@ import (
 )
 
 func main() {
-	log.Print("Loading config")
-	_, err := config.GetConfig()
+	// Read Config
+	cfg, err := config.GetConfig()
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)
 	}
-	log.Print("Config loaded")
 
+	// Initialize Echo
 	e := echo.New()
 
-	log.Print("Connecting to database")
-	_, err = db.GetInstance()
+	// Connect to DB
+	database, err := db.GetInstance(cfg)
 	if err != nil {
 		log.Fatal(err)
-
 	}
-	log.Print("Database connected")
 
-	log.Print("Initializing routes")
-	api.InitRoutes(e)
+	// Initialize Routes
+	api.InitRoutes(e, database)
 
-	log.Print("Starting server")
+	//Start Server
 	e.Logger.Fatal(e.Start(":8080"))
 }

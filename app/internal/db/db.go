@@ -9,9 +9,9 @@ import (
 
 var db *gorm.DB
 
-func GetInstance() (*gorm.DB, error) {
+func GetInstance(cfg *config.Config) (*gorm.DB, error) {
 	if db == nil {
-		err := initDB()
+		err := initDB(cfg)
 		if err != nil {
 			return nil, err
 		}
@@ -20,13 +20,9 @@ func GetInstance() (*gorm.DB, error) {
 	return db, nil
 }
 
-func initDB() error {
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return err
-	}
-
+func initDB(cfg *config.Config) error {
 	dsn := getDSN(cfg)
+	var err error
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return err
